@@ -1,0 +1,47 @@
+{
+    "os": "Windows-10-10.0.22621-SP0",
+    "python": "3.11.2",
+    "heartbeatAt": "2023-06-08T14:12:50.891899",
+    "startedAt": "2023-06-08T14:12:50.043361",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--batch_size",
+        "4"
+    ],
+    "state": "running",
+    "program": "E:\\Spam-detection\\train.py",
+    "codePath": "train.py",
+    "host": "NguyenHieu",
+    "username": "hieun",
+    "executable": "E:\\Spam-detection\\env\\Scripts\\python.exe",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 991.0,
+        "min": 0.0,
+        "max": 1190.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 991.0,
+            "min": 0.0,
+            "max": 1190.0
+        }
+    ],
+    "disk": {
+        "total": 439.45214462280273,
+        "used": 29.226070404052734
+    },
+    "gpu": "NVIDIA GeForce MX230",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce MX230",
+            "memory_total": 2147483648
+        }
+    ],
+    "memory": {
+        "total": 7.772785186767578
+    }
+}

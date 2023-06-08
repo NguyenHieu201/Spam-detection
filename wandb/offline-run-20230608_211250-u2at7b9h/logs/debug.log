@@ -1,0 +1,27 @@
+2023-06-08 21:12:50,051 INFO    MainThread:3104 [wandb_setup.py:_flush():76] Current SDK version is 0.15.4
+2023-06-08 21:12:50,052 INFO    MainThread:3104 [wandb_setup.py:_flush():76] Configure stats pid to 3104
+2023-06-08 21:12:50,052 INFO    MainThread:3104 [wandb_setup.py:_flush():76] Loading settings from C:\Users\hieun\.config\wandb\settings
+2023-06-08 21:12:50,052 INFO    MainThread:3104 [wandb_setup.py:_flush():76] Loading settings from E:\Spam-detection\wandb\settings
+2023-06-08 21:12:50,053 INFO    MainThread:3104 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-06-08 21:12:50,053 INFO    MainThread:3104 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2023-06-08 21:12:50,053 INFO    MainThread:3104 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'train.py', 'program': 'E:\\Spam-detection\\train.py'}
+2023-06-08 21:12:50,053 INFO    MainThread:3104 [wandb_setup.py:_flush():76] Applying login settings: {'mode': 'offline'}
+2023-06-08 21:12:50,054 INFO    MainThread:3104 [wandb_init.py:_log_setup():507] Logging user logs to E:\Spam-detection\wandb\offline-run-20230608_211250-u2at7b9h\logs\debug.log
+2023-06-08 21:12:50,054 INFO    MainThread:3104 [wandb_init.py:_log_setup():508] Logging internal logs to E:\Spam-detection\wandb\offline-run-20230608_211250-u2at7b9h\logs\debug-internal.log
+2023-06-08 21:12:50,054 INFO    MainThread:3104 [wandb_init.py:init():547] calling init triggers
+2023-06-08 21:12:50,054 INFO    MainThread:3104 [wandb_init.py:init():554] wandb.init called with sweep_config: {}
+config: {'epochs': 1, 'log_period': 1, 'batch_size': 4, 'loss_function': 'constrative', 'device': 'cpu', 'train_csv': './dataset/sign-data/train_data.csv', 'train_dir': './dataset/sign-data/train', 'val_csv': None, 'val_dir': None, 'train_size': 0.8, 'save_path': './output', 'wandb': True, 'session_name': 'SiameseNet', 'project_name': 'SiameseNet'}
+2023-06-08 21:12:50,055 INFO    MainThread:3104 [wandb_init.py:init():596] starting backend
+2023-06-08 21:12:50,055 INFO    MainThread:3104 [wandb_init.py:init():600] setting up manager
+2023-06-08 21:12:50,058 INFO    MainThread:3104 [backend.py:_multiprocessing_setup():106] multiprocessing start_methods=spawn, using: spawn
+2023-06-08 21:12:50,073 INFO    MainThread:3104 [wandb_init.py:init():606] backend started and connected
+2023-06-08 21:12:50,085 INFO    MainThread:3104 [wandb_init.py:init():703] updated telemetry
+2023-06-08 21:12:50,086 INFO    MainThread:3104 [wandb_init.py:init():736] communicating run to backend with 60.0 second timeout
+2023-06-08 21:12:50,091 INFO    MainThread:3104 [wandb_init.py:init():787] starting run threads in backend
+2023-06-08 21:12:50,993 INFO    MainThread:3104 [wandb_run.py:_console_start():2155] atexit reg
+2023-06-08 21:12:50,994 INFO    MainThread:3104 [wandb_run.py:_redirect():2010] redirect: 3
+2023-06-08 21:12:50,994 INFO    MainThread:3104 [wandb_run.py:_redirect():2075] Wrapping output streams.
+2023-06-08 21:12:50,994 INFO    MainThread:3104 [wandb_run.py:_redirect():2100] Redirects installed.
+2023-06-08 21:12:50,995 INFO    MainThread:3104 [wandb_init.py:init():828] run started, returning control to user process
+2023-06-08 21:12:50,995 INFO    MainThread:3104 [wandb_watch.py:watch():51] Watching
+2023-06-08 21:13:16,784 WARNING MsgRouterThr:3104 [router.py:message_loop():77] message_loop has been closed
