@@ -35,7 +35,7 @@ def parse_opt() -> Namespace:
     parser.add_argument("--save_path", type=str, default="./output")
 
     # wandb settings
-    parser.add_argument("--wandb", action="store_true", default=True)
+    parser.add_argument("--wandb", action="store_true", default=False)
     parser.add_argument("--session_name", type=str, default="SiameseNet")
     parser.add_argument("--project_name", type=str, default="SiameseNet")
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     device = torch.device(opt.device)
     model = SiameseNetwork().to(device)
     optimizer = optim.Adam(model.parameters())
-    criterion = ConstrastiveLoss()
+    criterion = ConstrastiveLoss(m=2)
     
     # setting dataset
     train_dir = opt.train_dir

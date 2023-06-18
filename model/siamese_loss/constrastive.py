@@ -10,6 +10,10 @@ class ConstrastiveLoss(nn.Module):
 
     def forward(self, embedd1, embedd2, label) -> torch.Tensor:
         distance = self.dist_metrics(embedd1, embedd2)
-        L = (1 - label) * distance + label * torch.clamp(self.m - distance, max=0)
+        label = label.unsqueeze(-1)
+        similar = (1 - label) * distance
+        disimilar = label * torch.clamp(self.m - distance, min=0)
+        L = similar + disimilar
         L = torch.sum(L) / L.shape[0]
+        print(distance)
         return L
