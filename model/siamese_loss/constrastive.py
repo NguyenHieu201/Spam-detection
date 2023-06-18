@@ -15,5 +15,4 @@ class ConstrastiveLoss(nn.Module):
         disimilar = label * torch.clamp(self.m - distance, min=0)
         L = similar + disimilar
         L = torch.sum(L) / L.shape[0]
-        print(distance)
         return L
