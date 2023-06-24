@@ -38,8 +38,8 @@ class SiameseDataset(Dataset):
         image2 = self._transform(image2)
 
         # convert pixel to [0, 1]
-        image1 = image1 / 255
-        image2 = image2 / 255
+        # image1 = image1 / 255
+        # image2 = image2 / 255
 
         return image1, image2, label
 
