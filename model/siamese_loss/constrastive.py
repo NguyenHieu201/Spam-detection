@@ -7,6 +7,7 @@ class ConstrastiveLoss(nn.Module):
         super().__init__(*args, **kwargs)
         self.m = m
         self.dist_metrics = nn.PairwiseDistance(p=2, keepdim=True)
+        self.relu = nn.ReLU()
 
     def forward(self, embedd1, embedd2, label) -> torch.Tensor:
         distance = self.dist_metrics(embedd1, embedd2)
