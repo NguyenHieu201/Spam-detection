@@ -28,6 +28,7 @@ def parse_opt() -> Namespace:
     # data settings
     parser.add_argument("--train_path", type=str, help="spamming data path")
     parser.add_argument("--train_size", type=float, default=0.8, help="split train data to create val data")
+    parser.add_argument("--num_samples", type=int, default=1000)
     
     # save settings
     parser.add_argument("--save_path", type=str, default="./output")
@@ -54,7 +55,9 @@ if __name__ == "__main__":
     image_path = opt.train_path
     id_products = os.listdir(image_path)
     products = []
-    opt.image_size = [500, 500]
+    
+    # TODO: fix optional for image size
+    opt.image_size = [105, 105]
 
     for id_product in id_products:
         # print(id_product)
@@ -75,7 +78,7 @@ if __name__ == "__main__":
 
 
     print(f"total samples available is: {len(products)}")
-    num_samples = 100
+    num_samples = opt.num_samples
     positive_ratio = 0.5
 
     train_dataset = SpamDataset(opt, products, num_samples, positive_ratio)
