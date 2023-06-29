@@ -8,10 +8,12 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
 import pandas as pd
 import torchvision.transforms as T
+from torchvision.io import read_image
 
 from model.sample.model import SiameseNetwork
 from utils.SiameseDataset import SiameseDataset
 from model.siamese_loss.constrastive import ConstrastiveLoss
+from utils.SpamDataset import Product, SpamDataset
 
 
 def parse_opt() -> Namespace:
@@ -23,21 +25,20 @@ def parse_opt() -> Namespace:
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--loss_function", type=str, default="constrative")
     parser.add_argument("--device", type=str, default="cpu")
+    parser.add_argument("--positive_aug", action="store_true", default=False)
 
     # data settings
-    parser.add_argument("--train_csv", type=str, default="./dataset/sign-data/train_data.csv")
-    parser.add_argument("--train_dir", type=str, default="./dataset/sign-data/train")
-    parser.add_argument("--val_csv", type=str, default=None)
-    parser.add_argument("--val_dir", type=str, default=None)
+    parser.add_argument("--train_path", type=str, help="spamming data path")
     parser.add_argument("--train_size", type=float, default=0.8, help="split train data to create val data")
+    parser.add_argument("--num_samples", type=int, default=1000)
     
     # save settings
     parser.add_argument("--save_path", type=str, default="./output")
 
     # wandb settings
     parser.add_argument("--wandb", action="store_true", default=False)
-    parser.add_argument("--session_name", type=str, default="SiameseNet")
-    parser.add_argument("--project_name", type=str, default="SiameseNet")
+    parser.add_argument("--session_name", type=str, default="SpammingDataset")
+    parser.add_argument("--project_name", type=str, default="SpammingDataset")
 
     opt = parser.parse_args()
     return opt
@@ -53,13 +54,47 @@ if __name__ == "__main__":
     criterion = ConstrastiveLoss(m=2)
     
     # setting dataset
-    train_dir = opt.train_dir
-    train_df = pd.read_csv(opt.train_csv)
-    train_dataset = SiameseDataset(base_dir=train_dir, data_df=train_df, transform=[T.ToTensor(), T.Grayscale(), T.Resize((105, 105))])
+    image_path = opt.train_path
+    id_products = os.listdir(image_path)
+    products = []
+    
+    # TODO: fix optional for image size
+    opt.image_size = [105, 105]
+
+    for id_product in id_products:
+        # print(id_product)
+        # print(f"{os.path.join(image_path, id_product)}")
+        image = os.listdir(os.path.join(image_path, id_product))
+        for img in image:
+            if img.endswith(".jpg"):
+                image = os.path.join(
+                    image_path,
+                    id_product,
+                    img
+                )
+                
+                try:
+                    read_image(image)
+                except RuntimeError:
+                    continue
+                
+                product = Product(id=id_product, image_path=image)
+                products.append(product)
+                
+
+
+    print(f"total samples available is: {len(products)}")
+
+    num_samples = opt.num_samples
+    positive_ratio = 0.5
+
+    train_dataset = SpamDataset(opt, products, num_samples, positive_ratio, opt.positive_aug)
     train_dataset, val_dataset = random_split(train_dataset, [opt.train_size, 1 - opt.train_size])
+    
     
     train_loader = DataLoader(train_dataset, batch_size=opt.batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=opt.batch_size, shuffle=True)
+    
     
     # set up wandb
     if opt.wandb:
@@ -70,7 +105,7 @@ if __name__ == "__main__":
         )
         wandb.watch(model, criterion=criterion)
     
-    prev_loss = 1e10
+    prev_loss = 10000000
     # Train
     for epoch in tqdm(range(opt.epochs)):
         losses = []
@@ -84,6 +119,7 @@ if __name__ == "__main__":
             optimizer.step()
             losses.append(loss.item())
             
+        print(f"Saving model to {os.path.join(opt.save_path, 'last.pt')}")
         torch.save(model.state_dict(), os.path.join(opt.save_path, "last.pt"))
         print(sum(losses) / len(losses))
         if opt.wandb:
@@ -100,13 +136,10 @@ if __name__ == "__main__":
                 prev_loss = val_loss
                 if val_loss < prev_loss:
                     torch.save(model.state_dict(), os.path.join(opt.save_path, "best.pt"))
+                    print(f"Saving model to {os.path.join(opt.save_path, 'best.pt')}")
+
                 if opt.wandb:
                     wandb.log({"train/val_losses": val_loss})
                     
-        
-    
-
     if opt.wandb:
         wandb.finish()
-    
-    

@@ -21,14 +21,21 @@ class Product(NamedTuple):
 
 class SpamDataset(Dataset):
     
-    def __init__(self, opt: Namespace, products: list[Product], num_samples: int=100, positive_ratio: float=0.5) -> None:
+    def __init__(self, opt: Namespace, products: list[Product], num_samples: int=100, 
+                 positive_ratio: float=0.5,
+                 positive_transform: bool=False) -> None:
         super().__init__()
         self.products = products
         self.num_samples = num_samples
         self.positive_ratio = positive_ratio
         self.data_pairs = self._init_dataset()
-        self.positive_transformation = T.Compose([T.RandomAffine(10), T.ColorJitter(), T.GaussianBlur((3, 3))])
         self.image_size = opt.image_size
+        self.final_transformation = T.Compose([T.Resize(size=self.image_size, antialias=True)])
+        
+        if positive_transform:
+            self.positive_transformation = T.Compose([T.RandomAffine(10), T.ColorJitter(), T.GaussianBlur((3, 3))])
+        else:
+            self.positive_transformation = T.Compose([])
         
     def __len__(self):
         return self.num_samples
@@ -46,9 +53,8 @@ class SpamDataset(Dataset):
 
 
         # resize image
-        resize = T.Resize(size=self.image_size, antialias=True)
-        image1 = resize(image1)
-        image2 = resize(image2)
+        image1 = self.final_transformation(image1)
+        image2 = self.final_transformation(image2)
         
         return image1 / 255, image2 / 255, label
 
