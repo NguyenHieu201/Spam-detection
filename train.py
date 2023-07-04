@@ -92,7 +92,7 @@ if __name__ == "__main__":
         torch.save(model.state_dict(), os.path.join(opt.save_path, "last.pt"))
         print(sum(losses) / len(losses))
         if opt.wandb:
-            wandb.log({"train/train-losses": sum(losses) / len(losses), "step": epoch})
+            wandb.log({"train/train-losses": sum(losses) / len(losses)}, step=epoch)
         
         if ((epoch + 1) % opt.log_period == 0) or (epoch == 0):
             with torch.no_grad():
@@ -108,7 +108,7 @@ if __name__ == "__main__":
                     print(f"Saving model to {os.path.join(opt.save_path, 'best.pt')}")
 
                 if opt.wandb:
-                    wandb.log({"train/val_losses": val_loss, "step": epoch})
+                    wandb.log({"train/val_losses": val_loss}, step=epoch)
                     
     if opt.wandb:
         wandb.finish()
