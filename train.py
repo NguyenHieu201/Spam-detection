@@ -10,10 +10,9 @@ import pandas as pd
 import torchvision.transforms as T
 from torchvision.io import read_image
 
-from model.sample.model import SiameseNetwork
+from model.resnet18.model import Model
 from utils.SiameseDataset import SiameseDataset
 from model.siamese_loss.constrastive import ConstrastiveLoss
-from utils.SpamDataset import Product, SpamDataset
 
 
 def parse_opt() -> Namespace:
@@ -25,12 +24,12 @@ def parse_opt() -> Namespace:
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--loss_function", type=str, default="constrative")
     parser.add_argument("--device", type=str, default="cpu")
-    parser.add_argument("--positive_aug", action="store_true", default=False)
+    parser.add_argument("--distance_threshold", type=float, default=10)
 
     # data settings
-    parser.add_argument("--train_path", type=str, help="spamming data path")
     parser.add_argument("--train_size", type=float, default=0.8, help="split train data to create val data")
-    parser.add_argument("--num_samples", type=int, default=1000)
+    parser.add_argument("--train_csv", type=str)
+    parser.add_argument("--img_dir", type=str)
     
     # save settings
     parser.add_argument("--save_path", type=str, default="./output")
@@ -49,46 +48,16 @@ if __name__ == "__main__":
     
     # setting model
     device = torch.device(opt.device)
-    model = SiameseNetwork().to(device)
+    model = Model().to(device)
     optimizer = optim.Adam(model.parameters())
-    criterion = ConstrastiveLoss(m=2)
-    
-    # setting dataset
-    image_path = opt.train_path
-    id_products = os.listdir(image_path)
-    products = []
+    criterion = ConstrastiveLoss(m=opt.distance_threshold)
     
     # TODO: fix optional for image size
     opt.image_size = [105, 105]
+    
+    data_df = pd.read_csv(opt.train_csv)
 
-    for id_product in id_products:
-        # print(id_product)
-        # print(f"{os.path.join(image_path, id_product)}")
-        image = os.listdir(os.path.join(image_path, id_product))
-        for img in image:
-            if img.endswith(".jpg"):
-                image = os.path.join(
-                    image_path,
-                    id_product,
-                    img
-                )
-                
-                try:
-                    read_image(image)
-                except RuntimeError:
-                    continue
-                
-                product = Product(id=id_product, image_path=image)
-                products.append(product)
-                
-
-
-    print(f"total samples available is: {len(products)}")
-
-    num_samples = opt.num_samples
-    positive_ratio = 0.5
-
-    train_dataset = SpamDataset(opt, products, num_samples, positive_ratio, opt.positive_aug)
+    train_dataset = SiameseDataset(opt.img_dir, data_df, opt)
     train_dataset, val_dataset = random_split(train_dataset, [opt.train_size, 1 - opt.train_size])
     
     
@@ -123,7 +92,7 @@ if __name__ == "__main__":
         torch.save(model.state_dict(), os.path.join(opt.save_path, "last.pt"))
         print(sum(losses) / len(losses))
         if opt.wandb:
-            wandb.log({"train/train-losses": sum(losses) / len(losses)})
+            wandb.log({"train/train-losses": sum(losses) / len(losses), "step": epoch})
         
         if ((epoch + 1) % opt.log_period == 0) or (epoch == 0):
             with torch.no_grad():
@@ -139,7 +108,7 @@ if __name__ == "__main__":
                     print(f"Saving model to {os.path.join(opt.save_path, 'best.pt')}")
 
                 if opt.wandb:
-                    wandb.log({"train/val_losses": val_loss})
+                    wandb.log({"train/val_losses": val_loss, "step": epoch})
                     
     if opt.wandb:
         wandb.finish()
