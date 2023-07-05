@@ -42,12 +42,14 @@ if __name__ == "__main__":
             elif os.path.isdir(os.path.join(image_dir, image1, file)):
                 reviews = [review for review in os.listdir(os.path.join(image_dir, image1, file))
                            if (".jpg" in review or ".png" in review)]
+                if len(reviews) == 0:
+                    continue
                 review = reviews[0]
                 review = os.path.join(file, review)
         img_path = os.path.join(image1, product)
         review_path = os.path.join(image1, review)
         
-        if product == "":
+        if product == "" or review == "":
             continue
         image_pair.append({
             "image1": img_path,

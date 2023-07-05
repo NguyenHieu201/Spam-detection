@@ -89,7 +89,18 @@ if __name__ == "__main__":
             losses.append(loss.item())
             
         print(f"Saving model to {os.path.join(opt.save_path, 'last.pt')}")
-        torch.save(model.state_dict(), os.path.join(opt.save_path, "last.pt"))
+        
+        # Save checkpoint
+        torch.save({
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "epoch": epoch
+        }, os.path.join(opt.save_path, "last.pt"))
+        
+        torch.save(model.state_dict(), os.path.join(opt.save_path, "last_weight.pt"))
+        
+        
+        
         print(sum(losses) / len(losses))
         if opt.wandb:
             wandb.log({"train/train-losses": sum(losses) / len(losses)}, step=epoch)
@@ -102,10 +113,18 @@ if __name__ == "__main__":
                     loss = criterion(embedd1, embedd2, y)
                     val_losses.append(loss.item())
                 val_loss = sum(val_losses) / len(val_losses)
-                prev_loss = val_loss
                 if val_loss < prev_loss:
-                    torch.save(model.state_dict(), os.path.join(opt.save_path, "best.pt"))
+                    
+                    torch.save(model.state_dict(), os.path.join(opt.save_path, "best_weight.pt"))
+                    
+                    torch.save({
+                        "model_state_dict": model.state_dict(),
+                        "optimizer_state_dict": optimizer.state_dict(),
+                        "epoch": epoch
+                    }, os.path.join(opt.save_path, "best.pt"))
+                    
                     print(f"Saving model to {os.path.join(opt.save_path, 'best.pt')}")
+                prev_loss = val_loss
 
                 if opt.wandb:
                     wandb.log({"train/val_losses": val_loss}, step=epoch)
