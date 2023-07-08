@@ -3,3 +3,4 @@ opencv-python
 torchvision
 wandb
 torchvision
+online_triplet_loss

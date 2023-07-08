@@ -10,3 +10,7 @@ class Model(nn.Module):
         output1 = self.resnet18(input1)
         output2 = self.resnet18(input2)
         return output1, output2
+    
+    def single_forward(self, input):
+        output = self.resnet18(input)
+        return output
