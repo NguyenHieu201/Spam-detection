@@ -1,7 +1,7 @@
 import os
 
 import wandb
-from tqdm import tqdm, pbar
+from tqdm import tqdm
 from argparse import Namespace, ArgumentParser
 import torch
 import torch.optim as optim
@@ -76,8 +76,8 @@ if __name__ == "__main__":
     
     prev_loss = 10000000
     # Train
-    pbar = tqdm(range(opt.epochs))
-    for epoch in pbar:
+    # pbar = tqdm(range(opt.epochs))
+    for epoch in tqdm(range(opt.epochs)):
         losses = []
         val_losses = []
         for X, y in train_loader:
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
                 if opt.wandb:
                     wandb.log({"train/val_losses": val_loss}, step=epoch)
-    pbar.close()
+    # pbar.close()
                     
     if opt.wandb:
         wandb.finish()

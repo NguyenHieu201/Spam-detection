@@ -1,5 +1,5 @@
 import torch.nn as nn
-from online_triplet_loss import batch_hard_triplet_loss
+from online_triplet_loss.losses import batch_hard_triplet_loss
 
 class TripletLoss(nn.Module):
     def __init__(self, m) -> None:
