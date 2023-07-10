@@ -61,7 +61,7 @@ if __name__ == "__main__":
     
     # make negative
     # negative_sample = random.sample(products, k=(2 * num_negative))
-    negative_sample = random.sample(products, k=max(12000, 2*num_negative))
+    negative_sample = random.sample(products, k=min(12000, 2*num_negative))
     image1 = negative_sample[:num_negative]
     image2 = negative_sample[-num_negative:]
     
