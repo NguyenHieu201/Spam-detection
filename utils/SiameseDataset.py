@@ -23,7 +23,8 @@ class SiameseDataset(Dataset):
         # center crop and random augmentation
         self.transform = T.Compose([ 
                                     T.CenterCrop((105, 105)),
-                                    T.Resize((224, 224))
+                                    T.Resize((224, 224), antialias=True),
+                                    T.ToTensor()
                                     ])
 
     def __len__(self) -> int:
@@ -34,10 +35,8 @@ class SiameseDataset(Dataset):
         image2_path = os.path.join(self.base_dir, self.data_df.iat[index, 1])
         label = self.data_df.iat[index, 2]
         
-        # image1 = Image.open(image1_path).convert("RGB")
-        # image2 = Image.open(image2_path).convert("RGB")
-        image1 = read_image(image1_path, ImageReadMode.RGB)
-        image2 = read_image(image2_path, ImageReadMode.RGB)
+        image1 = Image.open(image1_path).convert("RGB")
+        image2 = Image.open(image2_path).convert("RGB")
 
         image1 = self.transform(image1) / 255
         image2 = self.transform(image2) / 255
