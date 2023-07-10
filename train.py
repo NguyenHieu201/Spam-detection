@@ -25,6 +25,7 @@ def parse_opt() -> Namespace:
     parser.add_argument("--loss_function", type=str, default="constrative")
     parser.add_argument("--device", type=str, default="cpu")
     parser.add_argument("--distance_threshold", type=float, default=10)
+    parser.add_argument("--checkpoint", type=str, default="")
 
     # data settings
     parser.add_argument("--train_size", type=float, default=0.8, help="split train data to create val data")
@@ -51,6 +52,14 @@ if __name__ == "__main__":
     model = Model().to(device)
     optimizer = optim.Adam(model.parameters())
     criterion = ConstrastiveLoss(m=opt.distance_threshold)
+    
+    if os.path.exists(opt.checkpoint):
+        checkpoint = torch.load(opt.checkpoint)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        
+    
+    
     
     # TODO: fix optional for image size
     opt.image_size = [105, 105]
@@ -107,7 +116,7 @@ if __name__ == "__main__":
         
         if ((epoch + 1) % opt.log_period == 0) or (epoch == 0):
             with torch.no_grad():
-                for X1, X2, y in train_loader:
+                for X1, X2, y in val_loader:
                     X1, X2, y = X1.to(device), X2.to(device), y.to(device)
                     embedd1, embedd2 = model(X1, X2)
                     loss = criterion(embedd1, embedd2, y)

@@ -3,7 +3,7 @@ from typing import Any, List
 
 import torch
 from torch.utils.data import Dataset
-from torchvision.io import read_image
+from torchvision.io import read_image, ImageReadMode
 import torchvision.transforms as T
 from PIL import Image
 import pandas as pd
@@ -19,7 +19,12 @@ class SiameseDataset(Dataset):
         super().__init__()
         self.base_dir = base_dir
         self.data_df = data_df
-        self.transform = T.Compose([T.Resize(size=opt.image_size, antialias=True), T.ToTensor()])
+        
+        # center crop and random augmentation
+        self.transform = T.Compose([ 
+                                    T.CenterCrop((105, 105)),
+                                    T.Resize((224, 224))
+                                    ])
 
     def __len__(self) -> int:
         return self.data_df.shape[0]
@@ -29,10 +34,12 @@ class SiameseDataset(Dataset):
         image2_path = os.path.join(self.base_dir, self.data_df.iat[index, 1])
         label = self.data_df.iat[index, 2]
         
-        image1 = Image.open(image1_path).convert("RGB")
-        image2 = Image.open(image2_path).convert("RGB")
+        # image1 = Image.open(image1_path).convert("RGB")
+        # image2 = Image.open(image2_path).convert("RGB")
+        image1 = read_image(image1_path, ImageReadMode.RGB)
+        image2 = read_image(image2_path, ImageReadMode.RGB)
 
-        image1 = self.transform(image1)
-        image2 = self.transform(image2)
+        image1 = self.transform(image1) / 255
+        image2 = self.transform(image2) / 255
 
         return image1, image2, label
