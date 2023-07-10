@@ -38,7 +38,7 @@ class SiameseDataset(Dataset):
         image1 = Image.open(image1_path).convert("RGB")
         image2 = Image.open(image2_path).convert("RGB")
 
-        image1 = self.transform(image1) / 255
-        image2 = self.transform(image2) / 255
+        image1 = self.transform(image1)
+        image2 = self.transform(image2)
 
         return image1, image2, label
