@@ -60,9 +60,10 @@ if __name__ == "__main__":
         
     
     # make negative
-    negative_sample = random.sample(products, k=(2 * num_negative))
-    image1 = negative_sample[0::2]
-    image2 = negative_sample[1::2]
+    # negative_sample = random.sample(products, k=(2 * num_negative))
+    negative_sample = random.sample(products, k=max(12000, 2*num_negative))
+    image1 = negative_sample[:num_negative]
+    image2 = negative_sample[-num_negative:]
     
     for i in range(len(image1)):
         image1_path = [img for img in os.listdir(os.path.join(image_dir, image1[i]))
