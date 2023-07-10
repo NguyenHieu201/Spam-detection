@@ -40,5 +40,9 @@ class SiameseDataset(Dataset):
 
         image1 = self.transform(image1)
         image2 = self.transform(image2)
+        
+        if image1.max() > 10:
+            image1 = image1 / 255
+            image2 = image2 / 255
 
         return image1, image2, label
